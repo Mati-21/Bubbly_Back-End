@@ -10,14 +10,14 @@ export const signup = async (req, res, next) => {
       { userId: newUser._id },
       process.env.TOKEN_SECRET,
       {
-        expiresIn: "1m", // or '60s', or 60
+        expiresIn: "5m", // or '60s', or 60
       }
     );
 
     res.cookie("Access_token", token, {
       httpOnly: true,
       sameSite: "strict",
-      maxAge: 1000 * 60,
+      maxAge: 1000 * 60 * 5,
     });
 
     res.status(200).json({

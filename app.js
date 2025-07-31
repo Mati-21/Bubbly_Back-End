@@ -36,7 +36,12 @@ app.use(compression());
 app.use(fileUplaod({ useTempFiles: true }));
 
 // cors
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Your frontend origin
+    credentials: true, // Allow cookies
+  })
+);
 
 //routes
 app.use("/api/v1", routes);
