@@ -1,11 +1,12 @@
 import express from "express";
-import { createUser } from "../controller/auth.controller.js";
+import { Login, logout, signup } from "../controller/auth.controller.js";
+import { verifyToken } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.route("/register").post(createUser);
-router.route("/login").post(createUser);
-router.route("/logout").post(createUser);
-router.route("/register").post(createUser);
+router.route("/register").post(signup);
+router.route("/login").post(Login);
+router.route("/logout").post(logout);
+router.route("/authMiddleware").post(verifyToken);
 
 export default router;

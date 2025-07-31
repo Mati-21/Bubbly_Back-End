@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import validator from "validator";
 
 const userSchema = mongoose.Schema(
   {
@@ -23,7 +24,7 @@ const userSchema = mongoose.Schema(
       max: [128, "Maximum Length for password is 128 character"],
     },
     picture: String,
-    status: String,
+    bio: String,
   },
   {
     collection: "users",
