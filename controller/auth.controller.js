@@ -10,14 +10,14 @@ export const signup = async (req, res, next) => {
       { userId: newUser._id },
       process.env.TOKEN_SECRET,
       {
-        expiresIn: "5m", // or '60s', or 60
+        expiresIn: "1h", // or '60s', or 60
       }
     );
 
     res.cookie("Access_token", token, {
       httpOnly: true,
       sameSite: "strict",
-      maxAge: 1000 * 60 * 5,
+      maxAge: 1000 * 60 * 60,
     });
 
     res.status(200).json({
@@ -42,11 +42,11 @@ export const Login = async (req, res, next) => {
       { userId: user._id },
       process.env.TOKEN_SECRET,
       {
-        expiresIn: "1m",
+        expiresIn: "1h",
       }
     );
 
-    res.cookie("Access_token", token, { maxAge: 1000 * 60 });
+    res.cookie("Access_token", token, { maxAge: 1000 * 60 * 60 });
 
     res.status(200).json({
       message: "User Login Successfully",

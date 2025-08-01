@@ -1,4 +1,4 @@
-import mongoose, { Collection, mongo } from "mongoose";
+import mongoose from "mongoose";
 const { Types } = mongoose;
 const { ObjectId } = Types;
 
@@ -36,3 +36,4 @@ const chatSchema = mongoose.Schema(
 
 const ChatModel =
   mongoose.models.ChatModel || mongoose.model("ChatModel", chatSchema);
+export default ChatModel;
