@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const { ObjectId } = mongoose.Schema.Types;
 
-const messageSchema = mongoose.model(
+const messageSchema = mongoose.Schema(
   {
     sender: {
       type: ObjectId,

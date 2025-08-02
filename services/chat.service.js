@@ -24,11 +24,43 @@ export const checkChatExist = async (sender_id, receiver_id) => {
   return chat[0];
 };
 
-export const populateChat = async (chatId) => {
-  let populatedChat = await ChatModel.findById(chatId).populate(
-    "users",
-    "-password"
+export const chatCleaner = async (chatId, loggedInUser) => {
+  const chat = await ChatModel.findById(chatId)
+    .populate({
+      path: "users",
+      select: "-password",
+    })
+    .populate({ path: "admin", select: "-passowrd" });
+
+  if (chat.latestMessage) {
+    await ChatModel.populate(chat, { path: "latestMessage" });
+  }
+
+  const otherUser = chat.users.find(
+    (user) => user._id.toString() !== loggedInUser.toString()
   );
-  console.log("inner", populatedChat);
-  return populateChat;
+
+  const cleanedChat = {
+    _id: chat._id,
+    isGroup: chat.isGroup,
+    name: otherUser.name,
+    picture: otherUser.picture,
+    users: chat.users,
+    admin: chat.admin || null,
+    latestMessage: chat.latestMessage || null,
+    createdAt: chat.createdAt,
+  };
+
+  return cleanedChat;
+};
+
+export const findChats = async (userId) => {
+  const chats = await ChatModel.find({
+    users: { $elemMatch: { $eq: userId } },
+  })
+    .populate({ path: "users", select: "-password" })
+    .populate({ path: "latestMessage" })
+    .sort({ updatedAt: -1 });
+
+  return chats;
 };
