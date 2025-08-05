@@ -2,6 +2,9 @@ import createHttpError from "http-errors";
 import ChatModel from "../models/chat.model.js";
 
 export const checkChatExist = async (sender_id, receiver_id) => {
+  console.log("receiver", receiver_id);
+  console.log("sender", sender_id);
+
   const chat = await ChatModel.find({
     isGroup: false,
     $and: [
@@ -9,6 +12,8 @@ export const checkChatExist = async (sender_id, receiver_id) => {
       { users: { $elemMatch: { $eq: receiver_id } } },
     ],
   }).populate("users", "-password");
+
+  console.log("ssss", chat);
   await ChatModel.populate(chat, {
     path: "latestMessage",
     populate: {
