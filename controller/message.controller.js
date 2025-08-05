@@ -1,6 +1,7 @@
 import createHttpError from "http-errors";
 import {
   createMessage,
+  getChatMessages,
   populateMessage,
   updateLatestMessageInChat,
 } from "../services/message.service.js";
@@ -28,6 +29,17 @@ export const sendMessage = async (req, res, next) => {
     await updateLatestMessageInChat(chat_id, newMessage);
 
     res.status(200).json(populatedMessage);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMessages = async (req, res, next) => {
+  try {
+    const chat_id = req.params.chat_id;
+    console.log("jjjj", chat_id);
+    const messages = await getChatMessages(chat_id);
+    res.status(200).json(messages);
   } catch (error) {
     next(error);
   }

@@ -41,3 +41,18 @@ export const updateLatestMessageInChat = async (chat_id, msg) => {
   console.log("updated Chat", updatedChat);
   return updatedChat;
 };
+
+export const getChatMessages = async (chat_id) => {
+  console.log("chat-id", chat_id);
+  const messages = await MessageModel.find({ chat: chat_id })
+    .populate({
+      path: "sender",
+      select: "name picture bio email",
+    })
+    .populate({ path: "chat" });
+
+  if (!messages) {
+    throw createHttpError.BadRequest("Oops Something went wrong");
+  }
+  return messages;
+};
