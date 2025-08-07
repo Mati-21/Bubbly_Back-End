@@ -48,6 +48,7 @@ export const getChats = async (req, res, next) => {
   try {
     const userId = req.userId;
     const chats = await findChats(userId);
+
     res.status(200).json(chats);
   } catch (error) {
     next(error);
