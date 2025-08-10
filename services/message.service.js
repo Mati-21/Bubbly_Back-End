@@ -38,7 +38,7 @@ export const updateLatestMessageInChat = async (chat_id, msg) => {
     },
     { new: true }
   );
-  console.log("updated Chat", updatedChat);
+
   return updatedChat;
 };
 

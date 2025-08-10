@@ -37,7 +37,7 @@ export const sendMessage = async (req, res, next) => {
 export const getMessages = async (req, res, next) => {
   try {
     const chat_id = req.params.chat_id;
-    console.log("jjjj", chat_id);
+
     const messages = await getChatMessages(chat_id);
     res.status(200).json(messages);
   } catch (error) {

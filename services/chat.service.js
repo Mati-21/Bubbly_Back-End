@@ -10,7 +10,6 @@ export const checkChatExist = async (sender_id, receiver_id) => {
     ],
   }).populate("users", "-password");
 
-  console.log("ssss", chat);
   await ChatModel.populate(chat, {
     path: "latestMessage",
     populate: {
