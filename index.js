@@ -1,3 +1,4 @@
+import { Server } from "socket.io";
 import app from "./app.js";
 import mongoose from "mongoose";
 
@@ -22,6 +23,12 @@ mongoose.connection.on("error", async (error) => {
 // starting server
 const server = app.listen(PORT, () => {
   console.log("Server Started:");
+});
+
+// socket io server
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: { origin: process.env.CLIENT_ENDPOINT },
 });
 
 const exitHandler = async () => {
