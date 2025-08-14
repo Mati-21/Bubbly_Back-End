@@ -31,6 +31,10 @@ const io = new Server(server, {
   cors: { origin: process.env.CLIENT_ENDPOINT },
 });
 
+io.on("connection", (socket) => {
+  console.log("Socket Connected Successfully!!");
+});
+
 const exitHandler = async () => {
   if (server && server.listen) {
     await new Promise((resolve, reject) => {

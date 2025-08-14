@@ -11,7 +11,7 @@ export const sendMessage = async (req, res, next) => {
     const { message, chat_id, files } = req.body;
     const sender_id = req.userId;
 
-    if (!chat_id || (!message && !files)) {
+    if (!chat_id || (!message && !files.length > 0)) {
       throw createHttpError.BadRequest("Oops something went wrong");
     }
 
