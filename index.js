@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import app from "./app.js";
 import mongoose from "mongoose";
+import { socketHandler } from "./soketServer.js";
 
 // reading env variables
 const PORT = process.env.PORT;
@@ -33,6 +34,7 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log("Socket Connected Successfully!!");
+  socketHandler(socket);
 });
 
 const exitHandler = async () => {
