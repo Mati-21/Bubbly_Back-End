@@ -14,17 +14,25 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: [true, "Email address is required"],
-      unique: [true, "This email is already exist"],
+      unique: [true, "This email already exists"],
       validate: [validator.isEmail, "Please provide a valid email address"],
       lowercase: true,
     },
+
     password: {
       type: String,
-      min: [6, "Minimum Length for password is 6 character"],
-      max: [128, "Maximum Length for password is 128 character"],
+      min: [6, "Minimum Length for password is 6 characters"],
+      max: [128, "Maximum Length for password is 128 characters"],
     },
-    picture: String,
-    bio: String,
+
+    picture: {
+      type: [String], // ✅ array of image URLs
+      default: [],
+    },
+
+    bio: {
+      type: String,
+    },
   },
   {
     collection: "users",

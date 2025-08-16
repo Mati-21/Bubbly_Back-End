@@ -1,4 +1,4 @@
-import { findUser, getUsers } from "../services/user.service.js";
+import { findUser, getUsers, updateProfile } from "../services/user.service.js";
 
 export const getUser = async (req, res, next) => {
   try {
@@ -18,6 +18,18 @@ export const searchUser = async (req, res, next) => {
 
     const users = await getUsers(value);
     res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const uploadProfile = async (req, res, next) => {
+  try {
+    const { profile } = req.body;
+    const userId = req.userId;
+
+    const updatedUser = await updateProfile(userId, profile);
+    res.status(200).json(updatedUser);
   } catch (error) {
     next(error);
   }
