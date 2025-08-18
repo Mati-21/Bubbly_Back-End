@@ -26,11 +26,15 @@ export const searchUser = async (req, res, next) => {
 export const uploadProfile = async (req, res, next) => {
   try {
     const { profile } = req.body;
-    const userId = req.userId;
 
-    const updatedUser = await updateProfile(userId, profile);
-    res.status(200).json(updatedUser);
+    const userId = req.userId;
+    const link = profile.profileLink;
+
+    const updatedUser = await updateProfile(userId, link);
+    res.status(200).json({ isloaded: true, updatedUser });
   } catch (error) {
     next(error);
   }
 };
+
+// Default values shown

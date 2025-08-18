@@ -30,7 +30,8 @@ export const updateProfile = async (userId, profileUrl) => {
 
     user.picture.unshift(profileUrl); // add new pic at beginning
 
-    const updatedUser = await user.save(); // persist to DB
+    const updatedUser = await user.save();
+    // persist to DB
 
     return updatedUser;
   } catch (err) {
