@@ -8,7 +8,10 @@ const chatSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    picture: String,
+    picture: {
+      type: [String], // ✅ array of image URLs
+      default: [],
+    },
     isGroup: {
       type: Boolean,
       required: true,

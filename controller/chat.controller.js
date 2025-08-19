@@ -11,12 +11,15 @@ export const create_open_chat = async (req, res, next) => {
   try {
     const { receiver_id } = req.body;
     const sender_id = req.userId;
+    console.log(receiver_id);
+    console.log(sender_id);
 
     if (!receiver_id) {
       throw createHttpError("Oops something went wrong");
     }
 
     const chatExist = await checkChatExist(sender_id, receiver_id);
+    console.log("chatExist", chatExist);
 
     if (chatExist) {
       const cleanedChat = await chatCleaner(chatExist._id, sender_id);
@@ -35,11 +38,13 @@ export const create_open_chat = async (req, res, next) => {
 
       const newChat = await ChatModel.create(newChatData);
 
+      console.log("newChat", newChat);
       const populatedChat = await chatCleaner(newChat._id, sender_id);
 
       res.status(200).json(populatedChat);
     }
   } catch (error) {
+    console.log("%00 error");
     next(error);
   }
 };
