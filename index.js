@@ -34,7 +34,7 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log("Socket Connected Successfully!!");
-  socketHandler(socket);
+  socketHandler(socket, io);
 });
 
 const exitHandler = async () => {

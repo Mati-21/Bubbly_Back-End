@@ -38,7 +38,6 @@ export const create_open_chat = async (req, res, next) => {
 
       const newChat = await ChatModel.create(newChatData);
 
-      console.log("newChat", newChat);
       const populatedChat = await chatCleaner(newChat._id, sender_id);
 
       res.status(200).json(populatedChat);

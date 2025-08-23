@@ -1,7 +1,33 @@
-export const socketHandler = (socket) => {
+let onlineUsers = [];
+
+export const socketHandler = (socket, io) => {
   // when user joins
   socket.on("user joins", (userId) => {
     socket.join(userId);
+
+    if (!onlineUsers.some((user) => user.userId === userId)) {
+      console.log(`user ${userId} joined`);
+      onlineUsers.push({ userId: userId, socketId: socket.id });
+
+      //send back online users
+      io.emit("get-online-users", onlineUsers);
+    }
+  });
+
+  // offline
+  socket.on("disconnect", () => {
+    onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
+    io.emit("get-online-users", onlineUsers);
+  });
+
+  // logout
+  socket.on("logout", (userId) => {
+    onlineUsers = onlineUsers.filter(
+      (u) => !(u.userId === userId && u.socketId === socket.id)
+    );
+
+    // notify frontend
+    socket.emit("get-online-users", onlineUsers);
   });
 
   //listen for the chat messages
