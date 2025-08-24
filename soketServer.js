@@ -22,12 +22,13 @@ export const socketHandler = (socket, io) => {
 
   // logout
   socket.on("logout", (userId) => {
+    console.log("dilutional");
     onlineUsers = onlineUsers.filter(
       (u) => !(u.userId === userId && u.socketId === socket.id)
     );
 
     // notify frontend
-    socket.emit("get-online-users", onlineUsers);
+    io.emit("get-online-users", onlineUsers);
   });
 
   //listen for the chat messages

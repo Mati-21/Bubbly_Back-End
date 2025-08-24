@@ -19,7 +19,6 @@ export const create_open_chat = async (req, res, next) => {
     }
 
     const chatExist = await checkChatExist(sender_id, receiver_id);
-    console.log("chatExist", chatExist);
 
     if (chatExist) {
       const cleanedChat = await chatCleaner(chatExist._id, sender_id);
