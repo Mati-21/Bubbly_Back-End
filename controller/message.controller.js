@@ -20,6 +20,7 @@ export const sendMessage = async (req, res, next) => {
       message,
       files: files || [],
       chat: chat_id,
+      readby: [sender_id],
     };
 
     const newMessage = await createMessage(msgData);

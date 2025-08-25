@@ -46,7 +46,7 @@ export const createUser = async ({ name, email, password, picture, bio }) => {
       name,
       email,
       password: hashedPassword,
-      picture: picture || DEFAULT_PICTURE,
+      picture: [picture || DEFAULT_PICTURE],
       bio: bio || DEFAULT_BIO,
     });
 

@@ -49,6 +49,7 @@ export const create_open_chat = async (req, res, next) => {
 
 export const getChats = async (req, res, next) => {
   try {
+    console.log("hello");
     const userId = req.userId;
     const chats = await findChats(userId);
 
@@ -56,4 +57,17 @@ export const getChats = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+// controllers/chatController.js
+export const markMessagesAsRead = async (req, res) => {
+  const { chatId } = req.params;
+  const userId = req.user._id;
+
+  await MessageModel.updateMany(
+    { chat: chatId, readBy: { $nin: [userId] } },
+    { $push: { readBy: userId } }
+  );
+
+  res.json({ success: true });
 };

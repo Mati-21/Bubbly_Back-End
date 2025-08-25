@@ -16,6 +16,7 @@ const messageSchema = mongoose.Schema(
       type: ObjectId,
       ref: "ChatModel",
     },
+    readby: [{ type: ObjectId, ref: "UserModel" }],
   },
   {
     collection: "messages",

@@ -26,7 +26,7 @@ const userSchema = mongoose.Schema(
     },
 
     picture: {
-      type: [String], // ✅ array of image URLs
+      type: [String],
       default: [],
     },
 
