@@ -38,7 +38,7 @@ app.use(fileUplaod({ useTempFiles: true }));
 // cors
 app.use(
   cors({
-    origin: "http://localhost:5173", // Your frontend origin
+    origin: "http://localhost:5174", // Your frontend origin
     credentials: true, // Allow cookies
   })
 );

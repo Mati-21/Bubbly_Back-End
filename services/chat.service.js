@@ -57,7 +57,6 @@ export const chatCleaner = async (chatId, loggedInUser) => {
 };
 
 export const findChats = async (userId) => {
-  console.log("hello 2222");
   // 1. Get all chats for this user
   const chats = await ChatModel.find({
     users: { $elemMatch: { $eq: userId } },
@@ -76,7 +75,7 @@ export const findChats = async (userId) => {
       {
         $match: {
           chat: { $in: chats.map((c) => c._id) },
-          readBy: { $nin: [userId] },
+          readby: { $ne: userId },
         },
       },
       {
