@@ -114,6 +114,7 @@ export const updateChatMessages = async (userId, chatId) => {
 
   // Fetch updated docs
   const updatedMessages = await MessageModel.find({ chat: chatId });
+  console.log("updated", updateChatMessages);
 
   return updatedMessages;
 };
