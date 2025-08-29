@@ -6,7 +6,6 @@ export const socketHandler = (socket, io) => {
     socket.join(userId);
 
     if (!onlineUsers.some((user) => user.userId === userId)) {
-      console.log(`user ${userId} joined`);
       onlineUsers.push({ userId: userId, socketId: socket.id });
 
       //send back online users

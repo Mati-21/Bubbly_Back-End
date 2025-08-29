@@ -5,14 +5,14 @@ import {
   chatCleaner,
   checkChatExist,
   findChats,
+  updateChatMessages,
 } from "../services/chat.service.js";
+import MessageModel from "../models/message.model.js";
 
 export const create_open_chat = async (req, res, next) => {
   try {
     const { receiver_id } = req.body;
     const sender_id = req.userId;
-    console.log(receiver_id);
-    console.log(sender_id);
 
     if (!receiver_id) {
       throw createHttpError("Oops something went wrong");
@@ -49,7 +49,6 @@ export const create_open_chat = async (req, res, next) => {
 
 export const getChats = async (req, res, next) => {
   try {
-    console.log("hello");
     const userId = req.userId;
     const chats = await findChats(userId);
 
@@ -60,14 +59,16 @@ export const getChats = async (req, res, next) => {
 };
 
 // controllers/chatController.js
-export const markMessagesAsRead = async (req, res) => {
-  const { chatId } = req.params;
-  const userId = req.user._id;
+export const markMessagesAsRead = async (req, res, next) => {
+  try {
+    const { chatId } = req.params;
+    const userId = req.userId;
 
-  await MessageModel.updateMany(
-    { chat: chatId, readBy: { $nin: [userId] } },
-    { $push: { readBy: userId } }
-  );
+    await updateChatMessages(userId, chatId);
+    const chats = await findChats(userId);
 
-  res.json({ success: true });
+    res.status(200).json(chats);
+  } catch (error) {
+    next(error);
+  }
 };

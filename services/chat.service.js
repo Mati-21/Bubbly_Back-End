@@ -1,6 +1,7 @@
 import createHttpError from "http-errors";
 import ChatModel from "../models/chat.model.js";
 import MessageModel from "../models/message.model.js";
+import mongoose from "mongoose";
 
 export const checkChatExist = async (sender_id, receiver_id) => {
   const chat = await ChatModel.find({
@@ -57,25 +58,26 @@ export const chatCleaner = async (chatId, loggedInUser) => {
 };
 
 export const findChats = async (userId) => {
-  // 1. Get all chats for this user
-  const chats = await ChatModel.find({
-    users: { $elemMatch: { $eq: userId } },
-  })
-    .populate({ path: "users", select: "-password" })
-    .populate({ path: "latestMessage" })
-    .sort({ updatedAt: -1 })
-    .lean();
-
-  console.log("hello unreadCounts");
-
-  // 2. Aggregate unread counts for all these chats in one query
-  let unreadCounts = [];
   try {
-    unreadCounts = await MessageModel.aggregate([
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+
+    // 1. Get all chats for this user
+    const chats = await ChatModel.find({
+      users: userObjectId, // simpler than $elemMatch
+    })
+      .populate({ path: "users", select: "-password" })
+      .populate({ path: "latestMessage" })
+      .sort({ updatedAt: -1 })
+      .lean();
+
+    if (!chats.length) return [];
+
+    // 2. Aggregate unread counts
+    const unreadCounts = await MessageModel.aggregate([
       {
         $match: {
           chat: { $in: chats.map((c) => c._id) },
-          readby: { $ne: userId },
+          readby: { $nin: [userObjectId] },
         },
       },
       {
@@ -85,22 +87,33 @@ export const findChats = async (userId) => {
         },
       },
     ]);
-    console.log("hello unreadCounts", unreadCounts);
+
+    // 3. Convert aggregation result into a lookup object
+    const unreadMap = unreadCounts.reduce((acc, item) => {
+      acc[item._id.toString()] = item.unreadCount;
+      return acc;
+    }, {});
+
+    // 4. Merge unreadCount into chat objects
+    return chats.map((chat) => ({
+      ...chat,
+      unreadCount: unreadMap[chat._id.toString()] || 0,
+    }));
   } catch (err) {
-    console.error("aggregate error:", err);
+    console.error("findChats error:", err);
+    return [];
   }
+};
 
-  console.log("hello unreadCounts 222222");
+export const updateChatMessages = async (userId, chatId) => {
+  // Update all unread messages
+  await MessageModel.updateMany(
+    { chat: chatId, readby: { $nin: [userId] } },
+    { $addToSet: { readby: userId } }
+  );
 
-  // 3. Convert aggregation result into a lookup object
-  const unreadMap = unreadCounts.reduce((acc, item) => {
-    acc[item._id.toString()] = item.unreadCount;
-    return acc;
-  }, {});
+  // Fetch updated docs
+  const updatedMessages = await MessageModel.find({ chat: chatId });
 
-  // 4. Merge unreadCount into chat objects
-  return chats.map((chat) => ({
-    ...chat,
-    unreadCount: unreadMap[chat._id.toString()] || 0,
-  }));
+  return updatedMessages;
 };
