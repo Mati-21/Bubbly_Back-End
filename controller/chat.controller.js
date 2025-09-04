@@ -72,3 +72,26 @@ export const markMessagesAsRead = async (req, res, next) => {
     next(error);
   }
 };
+
+export const createGroup = async (req, res, next) => {
+  const { name, users } = req.body;
+  users.push(req.userId);
+  if (!name || !users) {
+    throw createHttpError.BadRequest("something went wrong");
+  }
+  const groupChatData = {
+    name,
+    users,
+    isGroup: true,
+    picture: process.env.DEFAULT_PICTURE,
+    admin: req.userId,
+  };
+
+  try {
+    const newGroup = await ChatModel.create(groupChatData);
+    const populatedGroupChat = await chatCleaner(newGroup._id, req.userId);
+    res.status(200).json(populatedGroupChat);
+  } catch (error) {
+    next(error);
+  }
+};
