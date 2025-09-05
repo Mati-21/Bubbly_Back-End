@@ -3,28 +3,49 @@ import ChatModel from "../models/chat.model.js";
 import MessageModel from "../models/message.model.js";
 import mongoose from "mongoose";
 
-export const checkChatExist = async (sender_id, receiver_id) => {
-  const chat = await ChatModel.find({
-    isGroup: false,
-    $and: [
-      { users: { $elemMatch: { $eq: sender_id } } },
-      { users: { $elemMatch: { $eq: receiver_id } } },
-    ],
-  }).populate("users", "-password");
+export const checkChatExist = async (sender_id, receiver_id, isGroup) => {
+  if (isGroup === false) {
+    const chat = await ChatModel.find({
+      isGroup: false,
+      $and: [
+        { users: { $elemMatch: { $eq: sender_id } } },
+        { users: { $elemMatch: { $eq: receiver_id } } },
+      ],
+    }).populate("users", "-password");
 
-  await ChatModel.populate(chat, {
-    path: "latestMessage",
-    populate: {
-      path: "sender",
-      select: "-password",
-    },
-  });
+    await ChatModel.populate(chat, {
+      path: "latestMessage",
+      populate: {
+        path: "sender",
+        select: "-password",
+      },
+    });
 
-  if (!chat) {
-    throw createHttpError("Oops something went wrong");
+    if (!chat) {
+      throw createHttpError("Oops something went wrong");
+    }
+
+    return chat[0];
+  } else {
+    const chat = await ChatModel.findById(isGroup).populate(
+      "users admin",
+      "-password"
+    );
+
+    await ChatModel.populate(chat, {
+      path: "latestMessage",
+      populate: {
+        path: "sender",
+        select: "-password",
+      },
+    });
+
+    if (!chat) {
+      throw createHttpError("Oops something went wrong");
+    }
+
+    return chat;
   }
-
-  return chat[0];
 };
 
 export const chatCleaner = async (chatId, loggedInUser) => {

@@ -11,35 +11,41 @@ import MessageModel from "../models/message.model.js";
 
 export const create_open_chat = async (req, res, next) => {
   try {
-    const { receiver_id } = req.body;
+    const { receiver_id, isGroup } = req.body;
     const sender_id = req.userId;
+    if (isGroup === false) {
+      if (!receiver_id) {
+        throw createHttpError("Oops something went wrong");
+      }
 
-    if (!receiver_id) {
-      throw createHttpError("Oops something went wrong");
-    }
+      const chatExist = await checkChatExist(sender_id, receiver_id, false);
 
-    const chatExist = await checkChatExist(sender_id, receiver_id);
+      if (chatExist) {
+        const cleanedChat = await chatCleaner(chatExist._id, sender_id);
+        res.status(200).json(cleanedChat);
+      } else {
+        const user = await UserModel.findById(receiver_id);
 
-    if (chatExist) {
-      const cleanedChat = await chatCleaner(chatExist._id, sender_id);
-      res.status(200).json(cleanedChat);
+        let newChatData = {
+          name: user.name,
+          picture: user.picture,
+          isGroup: false,
+          users: [sender_id, receiver_id],
+          admin: null,
+          latestMessage: null,
+        };
+
+        const newChat = await ChatModel.create(newChatData);
+
+        const populatedChat = await chatCleaner(newChat._id, sender_id);
+
+        res.status(200).json(populatedChat);
+      }
     } else {
-      const user = await UserModel.findById(receiver_id);
-
-      let newChatData = {
-        name: user.name,
-        picture: user.picture,
-        isGroup: false,
-        users: [sender_id, receiver_id],
-        admin: null,
-        latestMessage: null,
-      };
-
-      const newChat = await ChatModel.create(newChatData);
-
-      const populatedChat = await chatCleaner(newChat._id, sender_id);
-
-      res.status(200).json(populatedChat);
+      //its agroup
+      // check if the group exist
+      const groupChatExist = await checkChatExist("", "", isGroup);
+      res.status(200).json(groupChatExist);
     }
   } catch (error) {
     console.log("%00 error");
@@ -89,6 +95,7 @@ export const createGroup = async (req, res, next) => {
 
   try {
     const newGroup = await ChatModel.create(groupChatData);
+    console.log("new group", newGroup);
     const populatedGroupChat = await chatCleaner(newGroup._id, req.userId);
     res.status(200).json(populatedGroupChat);
   } catch (error) {
