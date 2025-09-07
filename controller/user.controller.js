@@ -14,7 +14,6 @@ export const getUser = async (req, res, next) => {
 export const searchUser = async (req, res, next) => {
   try {
     const { value } = req.body;
-    console.log(value);
 
     const users = await getUsers(value);
     res.status(200).json(users);
